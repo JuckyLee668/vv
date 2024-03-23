@@ -1,0 +1,104 @@
+{
+      "tag": "proxy1",
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "v3.juckylee.com",
+            "port": 9080,
+            "users": [
+              {
+                "id": "95d8de25-81ae-4bd3-88f9-f7594624ed96",
+                "alterId": 0,
+                "email": "t@t.tt",
+                "security": "auto"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "h2",
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": false,
+          "show": false
+        },
+        "httpSettings": {
+          "path": "/da6399d41e9f/"
+        }
+      },
+      "mux": {
+        "enabled": false,
+        "concurrency": -1
+      }
+    },
+    {
+      "tag": "proxy2",
+      "protocol": "vmess",
+      "settings": {
+        "vnext": [
+          {
+            "address": "v.juckylee.com",
+            "port": 8087,
+            "users": [
+              {
+                "id": "47f1e57b-aa8b-4128-acdf-2d70dedfb3cc",
+                "alterId": 0,
+                "email": "t@t.tt",
+                "security": "auto"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "h2",
+        "security": "tls",
+        "tlsSettings": {
+          "allowInsecure": false,
+          "show": false
+        },
+        "httpSettings": {
+          "path": "/efb3c3c5/"
+        }
+      },
+      "mux": {
+        "enabled": false,
+        "concurrency": -1
+      }
+    },
+    {
+      "tag": "proxy3",
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "www.visa.com.sg",
+            "port": 8880,
+            "users": [
+              {
+                "id": "9dfb0013-b928-4e0e-8590-63c19c6ff943",
+                "alterId": 0,
+                "email": "t@t.tt",
+                "security": "auto",
+                "encryption": "none"
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "path": "/?ed=2048",
+          "headers": {
+            "Host": "vless.xi-han.workers.dev"
+          }
+        }
+      },
+      "mux": {
+        "enabled": false,
+        "concurrency": -1
+      }
+    },
