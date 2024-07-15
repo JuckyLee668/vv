@@ -48,18 +48,7 @@
             document.body.removeChild(textarea);
 
              alert("复制成功！");
-             //window.location.href = "v2rayng://";
-            var appUrlScheme = "v2rayng://";
-                var iframe = document.createElement("iframe");
-                iframe.style.display = "none";
-                iframe.src = appUrlScheme;
-                document.body.appendChild(iframe);
-            
-                // 如果跳转失败，进行提示或备用操作
-                setTimeout(function() {
-                    document.body.removeChild(iframe);
-                    alert("无法跳转到应用，请手动打开应用。");
-                }, 2000);
+             window.location.href = "v2rayng://";
         }
     </script>
 </body>
