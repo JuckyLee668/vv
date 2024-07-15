@@ -1,16 +1,50 @@
-<html>
-  <head>
-  <title>Zero Trust配置</title>
-  </head>
-	<body>
-		
-		<h1><a href="https://developers.cloudflare.com/warp-client/get-started/">下载地址(官网)</a></h1>
-    
-    <h1>配置warp客户端</h1>
-		<ul>
-			<li>团队名称：xi-han</li>
-			<li>以  @qq.com 结尾邮箱</li>
-		</ul>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复制文字并跳转</title>
+    <style>
+        /* 添加一些基本样式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <p id="text-to-copy">https://xi-han.top/v2</p>
+    <button class="button" onclick="copyTextAndRedirect()">复制并跳转</button>
+
+    <script>
+    function copyTextAndRedirect() {
+            // 获取要复制的文字
+            var textToCopy = document.getElementById("text-to-copy").innerText;
+
+            // 创建一个隐藏的textarea来复制文本
+            var textarea = document.createElement("textarea");
+            textarea.value = textToCopy;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+
+            // 跳转到指定应用（示例中跳转到一个URL，可以根据需要更改为应用的URL Scheme）
+            var urlScheme = "com.v2ray.ang://";
+            window.location.href = urlScheme;
+        }
+    </script>
 </body>
 </html>
 
