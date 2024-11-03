@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>复制文字并跳转</title>
+    <style>
+        /* 添加一些基本样式 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #1b1b1f;
+        }
+        .button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+        .button:hover {
+            background-color: #45a049;
+            text-align: center;
+        }
+        h1{
+            text-align: center;
+            color: #fff;
+        }
+        h2 {
+         text-decoration: none;
+         text-align: center;
+         color:#fff
+         }
+        a {
+            text-decoration: none;
+            color: #fff;
+
+        }
+        p {
+            text-align: center;
+            color: #fff;
+        } 
+    </style>
+</head>
+<body>
+    <h1>下载地址</h1>
+    <h2><a href ="https://github.xi-han.top/2dust/v2rayNG/releases">v2rayNG</a></h2>
+    <h2><a href ="https://github.xi-han.top/2dust/v2rayN/releases">v2rayN</a></h2>
+    
+    <p id="text-to-copy" style="display: none;">https://xi-han.top/v2</p>
+    <h1>订阅链接</h1>
+    <p>https://xi-han.top/v2</p>
+    <p><button class="button" onclick="copyTextAndRedirect()">复制订阅</button></p>
+    
+
+    <script>
+    function copyTextAndRedirect() {
+            // 获取要复制的文字
+            var textToCopy = document.getElementById("text-to-copy").innerText;
+
+            // 创建一个隐藏的textarea来复制文本
+            var textarea = document.createElement("textarea");
+            textarea.value = textToCopy;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+
+             alert("复制成功！");
+             window.location.href = "v2rayng://install-sub?name=git&url=https://xi-han.top/v2";
+        }
+    </script>
+</body>
+</html>
