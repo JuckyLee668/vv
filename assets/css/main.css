@@ -49,7 +49,7 @@ footer {
 }
 
 .imgList {
-    animation:rolling 18s linear infinite;
+    animation:rolling 33s linear infinite;
     position: absolute;
     display: flex;
 }
