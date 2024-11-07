@@ -11,7 +11,7 @@
 
 ### [vitepress-with-github-Actions](https://github.com/JuckyLee668/vitepress-with-github-Actions)
 
-这是一个使用 VitePress 构建的文档项目。通过 GitHub Actions 自动化构建和部署，确保文档始终保持最新。
+这是一个使用 VitePress 构建文档的项目。通过 GitHub Actions 自动化构建和部署，确保文档始终保持最新。
 
 
 
