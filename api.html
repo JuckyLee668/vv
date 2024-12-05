@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>跨设备剪切板</title>
+  <style>
+    body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding-left: 10%;
+    padding-right: 10%;
+    }
+    h1 {
+    color: #4CAF50;
+    }
+    h3 {
+      color: #000;
+      size: 10px;
+    }
+    div {
+    margin-bottom: 20px;
+    }
+    input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    }
+    button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 20px;
+    }
+    button:hover {
+    background-color: #45a049;
+    }
+    pre {
+    background-color: #f4f4f9;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    
+    }
+   
+  </style>
+</head>
+<body>
+  <h1>跨设备剪切板</h1>
+  <h3>保存时间为7天，到期自动删除</h3>
+  <div>
+    <input id="key" type="text" placeholder="请输入键 (Key)" />
+    <textarea id="value" placeholder="请输入内容"></textarea>
+    <button id="save">保存</button>
+    <button id="retrieve">获取</button>
+    <button id="copy">复制</button>
+  </div>
+  <div>
+    
+    <h2>结果</h2>
+    <pre id="result">
+    
+    </pre>
+  </div>
+
+  <script>
+    const baseURL = 'https://api.xi-han.top';
+
+    document.getElementById('save').addEventListener('click', async () => {
+      const key = document.getElementById('key').value;
+      const value = document.getElementById('value').value;
+      const res = await fetch(`${baseURL}/save`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key, value }),
+        
+      });
+      document.getElementById('result').textContent = await res.text();
+    });
+
+    document.getElementById('retrieve').addEventListener('click', async () => {
+      const key = document.getElementById('key').value;
+      const res = await fetch(`${baseURL}/retrieve/${key}`, {
+            method: 'GET',
+            })
+      document.getElementById('result').textContent = res.ok ? await res.text() : '未找到数据';
+    });
+
+    document.getElementById('copy').addEventListener('click', () => {
+    const resultText = document.getElementById('result').textContent;
+    navigator.clipboard.writeText(resultText).then(() => {
+      alert('复制成功');
+    }).catch(err => {
+      console.error('复制失败', err);
+    });
+  });
+  </script>
+</body>
+</html>
