@@ -3,74 +3,504 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>复制文字并跳转</title>
+    <title>Xray 订阅管理 | Xi Han</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* 添加一些基本样式 */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #1b1b1f;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            text-align: center;
-        }
-        .button:hover {
-            background-color: #45a049;
-            text-align: center;
-        }
-        h1{
-            text-align: center;
-            color: #fff;
-        }
-        h2 {
-         text-decoration: none;
-         text-align: center;
-         color:#fff
-         }
-        a {
-            text-decoration: none;
-            color: #fff;
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
         }
-        p {
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 800px;
+            width: 85%;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
             text-align: center;
-            color: #fff;
-        } 
+            margin-bottom: 40px;
+        }
+
+        .header-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e8ecf0;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #667eea;
+        }
+
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 20px;
+        }
+
+        .download-card {
+            background: #f8f9ff;
+            border: 2px solid #e8ecf0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .download-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .download-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .download-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .download-icon {
+            font-size: 2rem;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .download-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .download-desc {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .download-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .download-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .subscription-area {
+            text-align: center;
+        }
+
+        .subscription-url {
+            background: #f8f9ff;
+            border: 2px solid #e8ecf0;
+            border-radius: 12px;
+            padding: 15px 20px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 1rem;
+            color: #2c3e50;
+            margin: 20px 0;
+            word-break: break-all;
+            position: relative;
+        }
+
+        .subscription-url::before {
+            content: '订阅链接';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            background: white;
+            color: #667eea;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0 8px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+            box-shadow: 0 5px 15px rgba(149, 165, 166, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(149, 165, 166, 0.4);
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .warning-notice {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 50%;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 900px) {
+            .container {
+                max-width: 650px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 25px 20px;
+                width: 95%;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .download-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+
+            .section {
+                padding: 20px;
+            }
+        }
+
+        /* 深色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            .container {
+                background: rgba(45, 52, 73, 0.95);
+                color: #e8ecf0;
+            }
+
+            .section {
+                background: rgba(52, 63, 86, 0.8);
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+
+            .download-card,
+            .subscription-url {
+                background: rgba(45, 52, 73, 0.5);
+                border-color: rgba(255, 255, 255, 0.1);
+                color: #e8ecf0;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>下载地址</h1>
-    <h2><a href ="https://github.xi-han.top/2dust/v2rayNG/releases">v2rayNG</a></h2>
-    <h2><a href ="https://github.xi-han.top/2dust/v2rayN/releases">v2rayN</a></h2>
-    
-    <p id="text-to-copy" style="display: none;">https://xi-han.top/v2</p>
-    <h1>订阅链接</h1>
-    <p>https://xi-han.top/v2</p>
-    <p><button class="button" onclick="copyTextAndRedirect()">复制订阅</button></p>
-    
+    <a href="../index.html" class="back-link" title="返回首页">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <i class="fas fa-paper-plane header-icon"></i>
+            <h1>Xray 订阅管理</h1>
+            <p class="subtitle">快速配置和管理您的代理订阅</p>
+        </div>
+
+        <div class="warning-notice">
+            <i class="fas fa-info-circle"></i>
+            <span>请确保您已了解相关法律法规，合理使用网络代理服务</span>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-download"></i>
+                客户端下载
+            </h2>
+            <div class="download-grid">
+                <div class="download-card">
+                    <div class="download-icon">
+                        <i class="fab fa-android"></i>
+                    </div>
+                    <div class="download-title">v2rayNG</div>
+                    <div class="download-desc">Android 客户端</div>
+                    <a href="https://github.xi-han.top/2dust/v2rayNG/releases" class="download-link">
+                        <i class="fas fa-download"></i>
+                        下载
+                    </a>
+                </div>
+
+                <div class="download-card">
+                    <div class="download-icon">
+                        <i class="fab fa-windows"></i>
+                    </div>
+                    <div class="download-title">v2rayN</div>
+                    <div class="download-desc">Windows 客户端</div>
+                    <a href="https://github.xi-han.top/2dust/v2rayN/releases" class="download-link">
+                        <i class="fas fa-download"></i>
+                        下载
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-link"></i>
+                订阅配置
+            </h2>
+            <div class="subscription-area">
+                <div class="subscription-url" id="subscriptionUrl">
+                    https://xi-han.top/v2
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="copySubscription()">
+                        <i class="fas fa-copy"></i>
+                        复制链接
+                    </button>
+                    <button class="btn btn-secondary" onclick="autoImport()">
+                        <i class="fas fa-magic"></i>
+                        一键导入
+                    </button>
+                </div>
+
+                <div class="success-message" id="successMessage">
+                    <i class="fas fa-check-circle"></i>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-    function copyTextAndRedirect() {
-            // 获取要复制的文字
-            var textToCopy = document.getElementById("text-to-copy").innerText;
-
-            // 创建一个隐藏的textarea来复制文本
-            var textarea = document.createElement("textarea");
-            textarea.value = textToCopy;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand("copy");
-            document.body.removeChild(textarea);
-
-             alert("复制成功！");
-             window.location.href = "v2rayng://install-sub?name=git&url=https://xi-han.top/v2";
+        // 显示成功消息
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.querySelector('span').textContent = message;
+            successDiv.style.display = 'flex';
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 3000);
         }
+
+        // 复制订阅链接
+        async function copySubscription() {
+            const subscriptionUrl = document.getElementById('subscriptionUrl').textContent.trim();
+            
+            try {
+                await navigator.clipboard.writeText(subscriptionUrl);
+                showSuccess('订阅链接已复制到剪切板！');
+            } catch (err) {
+                // 降级方案：使用传统的复制方法
+                try {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = subscriptionUrl;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showSuccess('订阅链接已复制到剪切板！');
+                } catch (fallbackErr) {
+                    alert('复制失败，请手动复制订阅链接');
+                    console.error('复制失败', err, fallbackErr);
+                }
+            }
+        }
+
+        // 自动导入到客户端
+        function autoImport() {
+            const subscriptionUrl = document.getElementById('subscriptionUrl').textContent.trim();
+            
+            // 尝试调用 v2rayNG 的 URL Scheme
+            try {
+                const importUrl = `v2rayng://install-sub?name=XiHan&url=${encodeURIComponent(subscriptionUrl)}`;
+                window.location.href = importUrl;
+                showSuccess('正在尝试自动导入到客户端...');
+            } catch (err) {
+                // 如果自动导入失败，提示手动操作
+                showSuccess('请手动在客户端中添加订阅链接');
+                console.error('自动导入失败', err);
+            }
+        }
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                container.style.transition = 'all 0.6s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
     </script>
 </body>
 </html>
