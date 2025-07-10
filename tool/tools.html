@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小工具导航</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            min-width: 800px;
+            max-width: 1200px;
+            width: 90%;
+            margin: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+            font-weight: 300;
+        }
+        
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            list-style: none;
+        }
+        
+        .tool-item {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #e8ecf0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tool-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .tool-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .tool-item:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .tool-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        
+        .tool-icon {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 15px;
+            display: block;
+        }
+        
+        .tool-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .tool-description {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #27ae60;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-badge.beta {
+            background: #f39c12;
+        }
+        
+        .status-badge.new {
+            background: #e74c3c;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e8ecf0;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                min-width: auto;
+                margin: 10px;
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .tools-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .tool-item {
+                padding: 20px;
+            }
+        }
+        
+        /* 加载动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .tool-item {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+        
+        .tool-item:nth-child(1) { animation-delay: 0.1s; }
+        .tool-item:nth-child(2) { animation-delay: 0.2s; }
+        .tool-item:nth-child(3) { animation-delay: 0.3s; }
+        .tool-item:nth-child(4) { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-tools"></i> 小工具导航</h1>
+            <p class="subtitle">精选实用工具，提升工作效率</p>
+        </div>
+        
+        <ul class="tools-grid">
+            <li class="tool-item">
+                <span class="status-badge">推荐</span>
+                <a href="./onlineClipboard.html" class="tool-link">
+                    <i class="fas fa-clipboard tool-icon"></i>
+                    <div class="tool-title">跨设备剪切板</div>
+                    <div class="tool-description">在不同设备间快速同步剪切板内容，支持文本、链接等多种格式</div>
+                </a>
+            </li>
+            
+            <li class="tool-item">
+                <span class="status-badge new">最新</span>
+                <a href="./cformula.html" class="tool-link">
+                    <i class="fas fa-calculator tool-icon"></i>
+                    <div class="tool-title">通用公式计算器</div>
+                    <div class="tool-description">支持复杂数学公式计算，包含三角函数、对数、科学计数等功能</div>
+                </a>
+            </li>
+            
+            <li class="tool-item">
+                <span class="status-badge beta">开发中</span>
+                <a href="#" class="tool-link" onclick="showComingSoon(event)">
+                    <i class="fas fa-magic tool-icon"></i>
+                    <div class="tool-title">更多工具</div>
+                    <div class="tool-description">更多实用工具正在开发中，敬请期待...</div>
+                </a>
+            </li>
+        </ul>
+        
+        <div class="footer">
+            <p><i class="fas fa-heart" style="color: #e74c3c;"></i> 用心打造每一个工具</p>
+        </div>
+    </div>
+    
+    <script>
+        function showComingSoon(event) {
+            event.preventDefault();
+            alert('🚧 更多精彩工具正在开发中，敬请期待！');
+        }
+        
+        // 添加页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                container.style.transition = 'all 0.6s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

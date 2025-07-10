@@ -1,0 +1,2245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a2980">
+    <title>通用公式计算器 - 支持变量输入与常数配置</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
+        
+        .app-container {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 25px;
+            align-items: start; /* 确保两列顶部对齐 */
+            min-height: 70vh; /* 设置最小高度，利用视口高度 */
+        }
+        
+        .calculator, .history {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(5px);
+        }
+        
+        .history {
+            display: flex;
+            flex-direction: column;
+            min-height: 600px; /* 设置最小高度确保足够的显示空间 */
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: #1a2980;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        .section-title i {
+            font-size: 1.5rem;
+            color: #26d0ce;
+        }
+        
+        .formula-container {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 1px solid #e0e5ff;
+        }
+        
+        .formula-display {
+            text-align: center;
+            font-size: 1.8rem;
+            font-family: 'Courier New', monospace;
+            color: #1a2980;
+            padding: 15px;
+            margin: 15px 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            min-height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        /* 快速输入栏 */
+        .quick-input-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* 改为4列布局，适合更多按钮 */
+            gap: 6px;
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f2ff;
+            border-radius: 10px;
+            border: 1px solid #e0e5ff;
+        }
+        
+        .quick-btn {
+            background: white;
+            border: 1px solid #e0e5ff;
+            border-radius: 6px;
+            padding: 8px 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1a2980;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 0; /* 允许按钮缩放以适应网格 */
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .quick-btn:hover {
+            background: #1a2980;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(26, 41, 128, 0.3);
+        }
+        
+        .quick-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* 工具提示样式 */
+        .quick-btn::after {
+            content: attr(title);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 1000;
+            pointer-events: none;
+        }
+        
+        .quick-btn:hover::after {
+            opacity: 1;
+            visibility: visible;
+            bottom: calc(100% + 5px);
+        }
+        
+        /* 桌面端也显示快速输入栏，但样式稍有不同 */
+        @media (min-width: 769px) and (hover: hover) {
+            .quick-input-bar {
+                background: #f8f9ff;
+                border: 1px solid #e0e5ff;
+                padding: 12px;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+            }
+            
+            .quick-btn {
+                height: 40px;
+                font-size: 0.9rem;
+                padding: 10px 8px;
+            }
+            
+            .quick-btn:hover::after {
+                bottom: calc(100% + 8px);
+            }
+        }
+        
+        /* 小屏幕快速按钮优化 */
+        @media (max-width: 480px) {
+            .quick-btn {
+                height: 32px;
+                padding: 6px 4px;
+                font-size: 0.8rem;
+                border-radius: 4px;
+            }
+            
+            .quick-input-bar {
+                gap: 4px;
+                padding: 8px;
+                grid-template-columns: repeat(4, 1fr); /* 保持4列 */
+            }
+            
+            .quick-btn::after {
+                font-size: 0.65rem;
+                padding: 3px 6px;
+            }
+        }
+        
+        /* 超小屏幕优化 */
+        @media (max-width: 360px) {
+            .quick-btn {
+                height: 30px;
+                padding: 4px 3px;
+                font-size: 0.75rem;
+            }
+            
+            .quick-input-bar {
+                gap: 3px;
+                padding: 6px;
+            }
+            
+            .quick-btn::after {
+                font-size: 0.6rem;
+                padding: 2px 4px;
+            }
+        }
+        
+        /* 公式操作栏 */
+        .formula-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+            align-items: center;
+        }
+        
+        .save-formula-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            min-width: 120px;
+        }
+        
+        .save-formula-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        .formula-select-container {
+            flex: 1;
+            position: relative;
+        }
+        
+        .formula-select {
+            flex: 1;
+            width: 100%;
+            padding: 10px 40px 10px 12px;
+            border: 2px solid #e0e5ff;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: linear-gradient(45deg, transparent 50%, #666 50%), 
+                              linear-gradient(135deg, #666 50%, transparent 50%);
+            background-position: calc(100% - 20px) calc(1em + 2px), 
+                                calc(100% - 15px) calc(1em + 2px);
+            background-size: 5px 5px, 5px 5px;
+            background-repeat: no-repeat;
+        }
+        
+        .formula-select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+            background-image: linear-gradient(45deg, #3498db 50%, transparent 50%), 
+                              linear-gradient(135deg, transparent 50%, #3498db 50%);
+        }
+        
+        .formula-select:hover {
+            border-color: #3498db;
+            background-image: linear-gradient(45deg, transparent 50%, #3498db 50%), 
+                              linear-gradient(135deg, #3498db 50%, transparent 50%);
+        }
+        
+        /* 自定义选项样式 */
+        .formula-select option {
+            padding: 8px 12px;
+            font-size: 0.95rem;
+            background: white;
+            color: #333;
+        }
+        
+        .formula-select option:hover {
+            background: #f8f9ff;
+        }
+        
+        .formula-select option[value=""] {
+            color: #999;
+            font-style: italic;
+        }
+        
+        .formula-select option[value="delete"] {
+            color: #e74c3c;
+            font-weight: 600;
+            border-top: 1px solid #eee;
+            background: #fff5f5;
+        }
+        
+        .formula-select option.formula-option {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .formula-select option.formula-option:last-of-type {
+            border-bottom: none;
+        }
+        
+        /* 手机端公式操作栏优化 */
+        @media (max-width: 600px) {
+            .formula-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .save-formula-btn {
+                width: 100%;
+                justify-content: center;
+                min-width: auto;
+            }
+            
+            .formula-select-container {
+                width: 100%;
+            }
+            
+            .formula-select {
+                width: 100%;
+            }
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #1a2980;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .input-group label i {
+            color: #26d0ce;
+            font-size: 1.2rem;
+        }
+        
+        input, select, textarea, button {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 2px solid #e0e5ff;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #1a2980;
+            box-shadow: 0 0 0 4px rgba(26, 41, 128, 0.15);
+        }
+        
+        .variables-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .variable-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9ff;
+            border-radius: 12px;
+            border: 1px solid #e0e5ff;
+        }
+        
+        .variable-item label {
+            min-width: 80px;
+            font-weight: 600;
+            color: #1a2980;
+        }
+        
+        .variable-item input {
+            flex: 1;
+        }
+        
+        .constants-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .constant-item {
+            background: #f8f9ff;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #e0e5ff;
+        }
+        
+        .constant-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .constant-name {
+            font-weight: 700;
+            color: #1a2980;
+            font-size: 1.1rem;
+        }
+        
+        .constant-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #26d0ce;
+        }
+        
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        button {
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .calculate-btn {
+            background: linear-gradient(to right, #1a2980, #26d0ce);
+            color: white;
+            grid-column: span 2;
+        }
+        
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(26, 41, 128, 0.4);
+        }
+        
+        .save-btn {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .save-btn:hover {
+            background: #27ae60;
+            transform: translateY(-3px);
+        }
+        
+        .clear-btn {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .clear-btn:hover {
+            background: #c0392b;
+            transform: translateY(-3px);
+        }
+        
+        .result-display {
+            background: #1a2980;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: white;
+            margin-top: 20px;
+            box-shadow: 0 8px 20px rgba(26, 41, 128, 0.3);
+        }
+        
+        .history-list {
+            flex: 1; /* 自动填满剩余空间 */
+            overflow-y: auto;
+            padding-right: 10px;
+            min-height: 0; /* 允许flex项目缩小 */
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .history-item {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #26d0ce;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 15px;
+        }
+        
+        .history-content {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .history-formula {
+            font-weight: 600;
+            color: #1a2980;
+            font-size: 1.1rem;
+        }
+        
+        .history-variables {
+            display: flex;
+            gap: 15px;
+            font-size: 0.95rem;
+            color: #555;
+            flex-wrap: wrap;
+        }
+        
+        .history-variable {
+            background: #e0e5ff;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+        
+        .history-result {
+            font-weight: 700;
+            color: #26d0ce;
+            font-size: 1.8rem;
+            min-width: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .empty-history {
+            text-align: center;
+            padding: 50px 20px;
+            color: #868e96;
+        }
+        
+        .empty-history i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #e0e5ff;
+        }
+        
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-shrink: 0; /* 防止头部被压缩 */
+        }
+        
+        .clear-history {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 18px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .clear-history:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+        
+        .constant-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #26d0ce;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* 平板布局 */
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 95%;
+            }
+            
+            .app-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .calculator, .history {
+                padding: 25px;
+            }
+        }
+        
+        /* 手机横屏和小平板 */
+        @media (max-width: 900px) {
+            header {
+                padding: 20px;
+            }
+            
+            header h1 {
+                font-size: 2.2rem;
+            }
+            
+            header p {
+                font-size: 1.1rem;
+            }
+            
+            .constants-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+            
+            .formula-display {
+                font-size: 1.6rem;
+                padding: 12px;
+            }
+            
+            .section-title {
+                font-size: 1.6rem;
+            }
+            
+            .result-display {
+                font-size: 1.8rem;
+                padding: 20px;
+            }
+        }
+        
+        /* 手机竖屏布局 */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+                align-items: flex-start;
+                padding-top: 20px;
+            }
+            
+            .container {
+                gap: 15px;
+            }
+            
+            header {
+                padding: 15px;
+                border-radius: 15px;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+                margin-bottom: 10px;
+            }
+            
+            header p {
+                font-size: 1rem;
+                line-height: 1.5;
+            }
+            
+            .calculator, .history {
+                padding: 20px;
+                border-radius: 15px;
+            }
+            
+            .history {
+                min-height: 500px; /* 移动端适当减小最小高度 */
+            }
+            
+            .section-title {
+                font-size: 1.4rem;
+                margin-bottom: 20px;
+            }
+            
+            .formula-container {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .formula-display {
+                font-size: 1.4rem;
+                padding: 10px;
+                min-height: 50px;
+            }
+            
+            .constants-container {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .constant-item {
+                padding: 12px;
+            }
+            
+            .variable-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                padding: 12px;
+            }
+            
+            .variable-item label {
+                min-width: auto;
+                margin-bottom: 5px;
+            }
+            
+            .variable-item input {
+                width: 100%;
+            }
+            
+            .buttons {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .calculate-btn {
+                grid-column: span 1;
+                order: -1; /* 将计算按钮移到顶部 */
+            }
+            
+            button {
+                padding: 14px;
+                font-size: 1rem;
+            }
+            
+            .result-display {
+                font-size: 1.6rem;
+                padding: 18px;
+                margin-top: 15px;
+            }
+            
+            /* 历史记录手机优化 */
+            .history-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+            
+            .clear-history {
+                width: 100%;
+                justify-content: center;
+                padding: 12px;
+            }
+            
+            .history-list {
+                flex: 1;
+                min-height: 0;
+            }
+            
+            .history-item {
+                grid-template-columns: 1fr;
+                padding: 15px;
+                gap: 10px;
+            }
+            
+            .history-formula {
+                font-size: 1rem;
+                word-break: break-all;
+            }
+            
+            .history-variables {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .history-variable {
+                display: block;
+                padding: 6px 10px;
+                text-align: center;
+            }
+            
+            .history-result {
+                min-width: 100%;
+                justify-content: center;
+                padding-top: 12px;
+                border-top: 1px dashed #ddd;
+                font-size: 1.4rem;
+            }
+            
+            /* 输入框优化 */
+            input, select, textarea {
+                padding: 12px 15px;
+                font-size: 16px; /* 防止iOS缩放 */
+            }
+            
+            .input-group label {
+                font-size: 1rem;
+            }
+            
+            /* 空历史记录优化 */
+            .empty-history {
+                padding: 30px 15px;
+            }
+            
+            .empty-history i {
+                font-size: 3rem;
+                margin-bottom: 15px;
+            }
+            
+            .empty-history h3 {
+                font-size: 1.2rem;
+                margin-bottom: 8px;
+            }
+            
+            .empty-history p {
+                font-size: 0.9rem;
+            }
+        }
+        
+        /* 超小屏幕优化 */
+        @media (max-width: 380px) {
+            header h1 {
+                font-size: 1.6rem;
+            }
+            
+            .calculator, .history {
+                padding: 15px;
+            }
+            
+            .formula-display {
+                font-size: 1.2rem;
+                word-break: break-all;
+            }
+            
+            .result-display {
+                font-size: 1.4rem;
+                padding: 15px;
+            }
+            
+            .section-title {
+                font-size: 1.2rem;
+            }
+            
+            button {
+                padding: 12px;
+                font-size: 0.95rem;
+            }
+        }
+        
+        /* 横屏手机优化 */
+        @media (max-width: 900px) and (orientation: landscape) {
+            body {
+                align-items: flex-start;
+                padding-top: 10px;
+            }
+            
+            header {
+                padding: 10px 20px;
+            }
+            
+            header h1 {
+                font-size: 1.8rem;
+                margin-bottom: 5px;
+            }
+            
+            header p {
+                font-size: 0.95rem;
+            }
+            
+            .app-container {
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+            }
+            
+            .calculator, .history {
+                padding: 15px;
+            }
+            
+            .history {
+                min-height: 400px; /* 小屏幕进一步减小最小高度 */
+            }
+            
+            .history-list {
+                flex: 1;
+                min-height: 0;
+            }
+            
+            .formula-display {
+                font-size: 1.3rem;
+                padding: 8px;
+            }
+            
+            .result-display {
+                font-size: 1.4rem;
+                padding: 12px;
+            }
+        }
+        
+        /* 移动设备特定样式 */
+        .mobile-device {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        .mobile-device input, 
+        .mobile-device textarea {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+        
+        .mobile-device button {
+            cursor: pointer;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 防止iOS Safari缩放 */
+        .mobile-device input[type="number"]:focus {
+            font-size: 16px !important;
+        }
+        
+        /* 滑动提示 */
+        .swipe-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .swipe-hint.show {
+            opacity: 1;
+        }
+        
+        /* 触摸设备优化 */
+        @media (hover: none) and (pointer: coarse) {
+            button {
+                padding: 16px;
+                min-height: 48px; /* 确保触摸目标足够大 */
+            }
+            
+            /* 快速按钮移动端优化 */
+            .quick-btn {
+                height: 40px;
+                padding: 8px 6px;
+                font-size: 0.9rem;
+                min-height: 40px; /* 确保触摸友好 */
+            }
+            
+            .quick-input-bar {
+                gap: 6px;
+                padding: 8px;
+            }
+            
+            /* 隐藏hover提示，避免在触摸设备上显示问题 */
+            .quick-btn::after {
+                display: none;
+            }
+            
+            .toggle-switch {
+                width: 60px;
+                height: 30px;
+            }
+            
+            .toggle-switch .slider:before {
+                height: 22px;
+                width: 22px;
+                left: 4px;
+                bottom: 4px;
+            }
+            
+            input:checked + .slider:before {
+                transform: translateX(30px);
+            }
+            
+            input, select, textarea {
+                min-height: 48px;
+            }
+            
+            /* 增加点击区域 */
+            .constant-toggle {
+                padding: 10px;
+                margin: -10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>通用公式计算器</h1>
+            <p>输入任意公式，配置变量和常数，轻松计算结果并保存历史记录</p>
+        </header>
+        
+        <div class="app-container">
+            <div class="calculator">
+                <h2 class="section-title"><i class="fas fa-calculator"></i> 公式计算器</h2>
+                
+                <div class="formula-container">
+                    <div class="input-group">
+                        <label for="formulaInput"><i class="fas fa-square-root-alt"></i> 输入公式</label>
+                        <input type="text" id="formulaInput" placeholder="例如: G * (M * m / (r * r))" value="G * (M * m / (r * r))">
+                        <p style="margin-top: 8px; font-size: 0.9rem; color: #666;">提示：使用变量名如 r, x, y 等，常数名使用大写字母，大小写之间要使用乘号隔开，否则也视作常数名。点击下方按钮快速插入数学符号</p>
+                        
+                        <!-- 快速输入栏 -->
+                        <div class="quick-input-bar" id="quickInputBar">
+                            <button type="button" class="quick-btn" data-symbol="(" title="左括号">(</button>
+                            <button type="button" class="quick-btn" data-symbol=")" title="右括号">)</button>
+                            <button type="button" class="quick-btn" data-symbol="^" title="幂运算">x²</button>
+                            <button type="button" class="quick-btn" data-symbol="*" title="乘法">×</button>
+                            <button type="button" class="quick-btn" data-symbol="/" title="除法">÷</button>
+                            <button type="button" class="quick-btn" data-symbol="+" title="加法">+</button>
+                            <button type="button" class="quick-btn" data-symbol="-" title="减法">-</button>
+                            <button type="button" class="quick-btn" data-symbol="PI" title="圆周率">π</button>
+                            <button type="button" class="quick-btn" data-symbol="E" title="自然常数">e</button>
+                            <button type="button" class="quick-btn" data-symbol="sin" title="正弦函数">sin</button>
+                            <button type="button" class="quick-btn" data-symbol="cos" title="余弦函数">cos</button>
+                            <button type="button" class="quick-btn" data-symbol="tan" title="正切函数">tan</button>
+                            <button type="button" class="quick-btn" data-symbol="log" title="常用对数">log</button>
+                            <button type="button" class="quick-btn" data-symbol="ln" title="自然对数">ln</button>
+                            <button type="button" class="quick-btn" data-symbol="sqrt" title="平方根">√</button>
+                            <button type="button" class="quick-btn" data-symbol="abs" title="绝对值">|x|</button>
+                        </div>
+                        
+                        <!-- 公式保存和选择 -->
+                        <div class="formula-actions">
+                            <button type="button" class="save-formula-btn" id="saveFormulaBtn">
+                                <i class="fas fa-bookmark"></i> 保存公式
+                            </button>
+                            <div class="formula-select-container">
+                                <select id="formulaSelect" class="formula-select">
+                                    <option value="">选择已保存的公式...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="formula-display" id="formulaDisplay">
+                        Y = G × (M × m / r²)
+                    </div>
+                </div>
+                
+                <div class="variables-container" id="variablesContainer">
+                    <div class="input-group">
+                        <label><i class="fas fa-sliders-h"></i> 输入变量值</label>
+                        <div class="variable-item">
+                            <label for="variableR">r =</label>
+                            <input type="number" id="variableR" placeholder="输入变量 r 的值" value="10">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <label><i class="fas fa-cog"></i> 常数配置</label>
+                    <div class="constants-container" id="constantsContainer">
+                        <div class="constant-item">
+                            <div class="constant-header">
+                                <span class="constant-name">G</span>
+                                <span class="constant-value" id="constantGValue">6.67430e-11</span>
+                            </div>
+                            <input type="number" id="constantG" value="6.67430e-11" step="0.0000000000001">
+                            <div class="constant-toggle">
+                                <span>锁定:</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="lockG">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="constant-item">
+                            <div class="constant-header">
+                                <span class="constant-name">M</span>
+                                <span class="constant-value" id="constantMValue">5.972e24</span>
+                            </div>
+                            <input type="number" id="constantM" value="5.972e24" step="1000000000000000000">
+                            <div class="constant-toggle">
+                                <span>锁定:</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="lockM">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <div class="constant-item">
+                            <div class="constant-header">
+                                <span class="constant-name">m</span>
+                                <span class="constant-value" id="constantmValue">7.348e22</span>
+                            </div>
+                            <input type="number" id="constantm" value="7.348e22" step="100000000000000000">
+                            <div class="constant-toggle">
+                                <span>锁定:</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="lockm">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="buttons">
+                    <button class="save-btn" id="saveConstants">
+                        <i class="fas fa-save"></i> 保存常数
+                    </button>
+                    <button class="clear-btn" id="resetConstants">
+                        <i class="fas fa-undo"></i> 重置常数
+                    </button>
+                    <button class="calculate-btn" id="calculate">
+                        <i class="fas fa-calculator"></i> 计算
+                    </button>
+                </div>
+                
+                <div class="result-display" id="resultDisplay">
+                    结果将显示在这里
+                </div>
+            </div>
+            
+            <div class="history">
+                <div class="history-header">
+                    <h2 class="section-title"><i class="fas fa-history"></i> 计算历史</h2>
+                    <button class="clear-history" id="clearHistory">
+                        <i class="fas fa-trash-alt"></i> 清除历史
+                    </button>
+                </div>
+                
+                <div class="history-list" id="historyList">
+                    <div class="empty-history">
+                        <i class="fas fa-clock"></i>
+                        <h3>暂无计算记录</h3>
+                        <p>开始计算后，历史记录将显示在这里</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 移动端操作提示 -->
+        <div class="swipe-hint" id="swipeHint">
+            <i class="fas fa-hand-point-up"></i> 点击快速按钮插入符号
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取DOM元素
+            const formulaInput = document.getElementById('formulaInput');
+            const formulaDisplay = document.getElementById('formulaDisplay');
+            const variableRInput = document.getElementById('variableR');
+            const constantsContainer = document.getElementById('constantsContainer');
+            const calculateBtn = document.getElementById('calculate');
+            const resultDisplay = document.getElementById('resultDisplay');
+            const historyList = document.getElementById('historyList');
+            const clearHistoryBtn = document.getElementById('clearHistory');
+            const saveConstantsBtn = document.getElementById('saveConstants');
+            const resetConstantsBtn = document.getElementById('resetConstants');
+            const saveFormulaBtn = document.getElementById('saveFormulaBtn');
+            const formulaSelect = document.getElementById('formulaSelect');
+            
+            // 默认常数配置
+            const defaultConstants = {
+                'G': 6.67430e-11,
+                'M': 5.972e24,
+                'm': 7.348e22,
+                'C': 299792458,
+                'PI': Math.PI,
+                'E': Math.E,
+                'H': 6.62607015e-34,
+                'K': 1.380649e-23
+            };
+            
+            // 数学函数和常数关键字
+            const mathKeywords = {
+                // 数学常数
+                'PI': Math.PI,
+                'pi': Math.PI,
+                'π': Math.PI,    // 添加π符号支持
+                'E': Math.E,
+                'e': Math.E,
+                
+                // 三角函数
+                'sin': Math.sin,
+                'cos': Math.cos,
+                'tan': Math.tan,
+                'asin': Math.asin,
+                'acos': Math.acos,
+                'atan': Math.atan,
+                'sinh': Math.sinh,
+                'cosh': Math.cosh,
+                'tanh': Math.tanh,
+                
+                // 反三角函数别名
+                'arcsin': Math.asin,
+                'arccos': Math.acos,
+                'arctan': Math.atan,
+                
+                // 对数函数
+                'log': Math.log10,
+                'ln': Math.log,
+                'log10': Math.log10,
+                'log2': Math.log2,
+                'lg': Math.log10,    // 常用对数别名
+                
+                // 其他数学函数
+                'sqrt': Math.sqrt,
+                'abs': Math.abs,
+                'pow': Math.pow,
+                'exp': Math.exp,
+                'ceil': Math.ceil,
+                'floor': Math.floor,
+                'round': Math.round,
+                'max': Math.max,
+                'min': Math.min,
+                'random': Math.random
+            };
+            
+            // 当前常数配置
+            let currentConstants = {...defaultConstants};
+            
+            // 锁定状态
+            let lockedConstants = {};
+            
+            // 当前变量
+            let currentVariables = {};
+            
+            // 计算历史
+            let calculationHistory = [];
+            
+            // 保存的公式
+            let savedFormulas = [];
+            
+            // 解析公式中的变量和常数
+            function parseFormula(formula) {
+                const variables = new Set();
+                const constants = new Set();
+                
+                // 匹配所有的标识符（字母开头的变量名）
+                const identifiers = formula.match(/[a-zA-Z][a-zA-Z0-9_]*/g) || [];
+                
+                identifiers.forEach(identifier => {
+                    // 检查是否为数学关键字
+                    if (mathKeywords.hasOwnProperty(identifier)) {
+                        // 数学函数和常数不显示在输入框中
+                        return;
+                    }
+                    
+                    // 特殊处理一些数学符号
+                    if (identifier === 'π' || identifier === 'PI' || identifier === 'pi') {
+                        return; // π相关的都不作为变量
+                    }
+                    
+                    // 检查是否为常见的数学函数名（避免误识别）
+                    const commonMathFunctions = ['sin', 'cos', 'tan', 'log', 'ln', 'exp', 'sqrt', 'abs', 'max', 'min'];
+                    if (commonMathFunctions.includes(identifier.toLowerCase())) {
+                        return;
+                    }
+                    
+                    // 大写字母开头的认为是常数（但排除数学常数）
+                    if (/^[A-Z]/.test(identifier) && identifier !== 'E') {
+                        constants.add(identifier);
+                    } else if (identifier !== 'e') {
+                        // 小写字母开头的认为是变量（但排除数学常数e）
+                        variables.add(identifier);
+                    }
+                });
+                
+                return { variables: Array.from(variables), constants: Array.from(constants) };
+            }
+            
+            // 动态生成变量输入框
+            function generateVariableInputs(variables) {
+                const variablesContainer = document.getElementById('variablesContainer');
+                
+                if (variables.length === 0) {
+                    variablesContainer.innerHTML = `
+                        <div class="input-group">
+                            <label><i class="fas fa-sliders-h"></i> 变量值</label>
+                            <p style="color: #666; font-style: italic;">公式中未检测到变量</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = `
+                    <div class="input-group">
+                        <label><i class="fas fa-sliders-h"></i> 输入变量值</label>
+                `;
+                
+                variables.forEach(variable => {
+                    const currentValue = currentVariables[variable] || '';
+                    html += `
+                        <div class="variable-item">
+                            <label for="variable${variable}">${variable} =</label>
+                            <input type="number" id="variable${variable}" placeholder="输入变量 ${variable} 的值" value="${currentValue}">
+                        </div>
+                    `;
+                });
+                
+                html += `</div>`;
+                variablesContainer.innerHTML = html;
+                
+                // 为新生成的输入框添加事件监听器
+                variables.forEach(variable => {
+                    const input = document.getElementById(`variable${variable}`);
+                    if (input) {
+                        input.addEventListener('input', function() {
+                            currentVariables[variable] = parseFloat(this.value) || 0;
+                        });
+                    }
+                });
+            }
+            
+            // 动态生成常数配置
+            function generateConstantInputs(constants) {
+                const constantsContainer = document.getElementById('constantsContainer');
+                
+                if (constants.length === 0) {
+                    constantsContainer.innerHTML = `
+                        <div style="grid-column: 1 / -1; text-align: center; color: #666; font-style: italic; padding: 20px;">
+                            公式中未检测到常数
+                        </div>
+                    `;
+                    return;
+                }
+                
+                let html = '';
+                
+                constants.forEach(constant => {
+                    // 如果是新常数且不在默认配置中，使用默认值1
+                    if (!currentConstants.hasOwnProperty(constant)) {
+                        currentConstants[constant] = 1;
+                    }
+                    
+                    const value = currentConstants[constant];
+                    const isLocked = lockedConstants[constant] || false;
+                    
+                    html += `
+                        <div class="constant-item">
+                            <div class="constant-header">
+                                <span class="constant-name">${constant}</span>
+                                <span class="constant-value" id="constant${constant}Value">${formatScientific(value)}</span>
+                            </div>
+                            <input type="number" id="constant${constant}" value="${value}" step="any" ${isLocked ? 'disabled' : ''}>
+                            <div class="constant-toggle">
+                                <span>锁定:</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="lock${constant}" ${isLocked ? 'checked' : ''}>
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                constantsContainer.innerHTML = html;
+                
+                // 为新生成的常数输入框和锁定开关添加事件监听器
+                constants.forEach(constant => {
+                    const input = document.getElementById(`constant${constant}`);
+                    const lockToggle = document.getElementById(`lock${constant}`);
+                    const valueDisplay = document.getElementById(`constant${constant}Value`);
+                    
+                    if (input) {
+                        input.addEventListener('input', function() {
+                            const newValue = parseFloat(this.value) || 0;
+                            currentConstants[constant] = newValue;
+                            if (valueDisplay) {
+                                valueDisplay.textContent = formatScientific(newValue);
+                            }
+                        });
+                    }
+                    
+                    if (lockToggle) {
+                        lockToggle.addEventListener('change', function() {
+                            lockedConstants[constant] = this.checked;
+                            if (input) {
+                                input.disabled = this.checked;
+                            }
+                        });
+                    }
+                });
+            }
+            
+            // 初始化
+            function init() {
+                // 从本地存储加载历史记录
+                const savedHistory = localStorage.getItem('calculationHistory');
+                if (savedHistory) {
+                    calculationHistory = JSON.parse(savedHistory);
+                    updateHistoryDisplay();
+                }
+                
+                // 从本地存储加载常数配置
+                const savedConstants = localStorage.getItem('savedConstants');
+                if (savedConstants) {
+                    currentConstants = JSON.parse(savedConstants);
+                    updateConstantsDisplay();
+                }
+                
+                // 更新公式显示
+                updateFormulaDisplay();
+                
+                // 设置锁定状态事件
+                setupLockEvents();
+            }
+            
+            // 更新公式显示
+            function updateFormulaDisplay() {
+                const formula = formulaInput.value.trim() || 'G * (M * m / (r * r))';
+                let displayFormula = formula
+                    .replace(/\*/g, '×')
+                    .replace(/\//g, '÷')
+                    .replace(/\^/g, '')
+                    .replace(/r\s*\*\s*r/g, 'r²')
+                    .replace(/(\w+)\s*\*\s*\1/g, '$1²')  // 通用平方替换
+                    .replace(/\bPI\b/g, 'π')  // PI替换为π符号
+                    .replace(/\bpi\b/g, 'π')  // pi替换为π符号
+                    .replace(/\bE\b(?![a-z])/g, 'e')  // E替换为e符号（避免与变量E冲突）
+                    .replace(/\bsqrt\b/g, '√')  // sqrt替换为√符号
+                    .replace(/\bsin\b/g, 'sin')  // 保持函数名美观
+                    .replace(/\bcos\b/g, 'cos')  // 保持函数名美观
+                    .replace(/\btan\b/g, 'tan')  // 保持函数名美观
+                    .replace(/\bln\b/g, 'ln')    // 自然对数
+                    .replace(/\blog\b/g, 'log')  // 常用对数
+                    .replace(/\bexp\b/g, 'exp'); // 指数函数
+                
+                // 特殊处理abs函数，将abs(content)转换为|content|
+                displayFormula = displayFormula.replace(/\babs\s*\(([^()]*(?:\([^()]*\)[^()]*)*)\)/g, '|$1|');
+                
+                formulaDisplay.innerHTML = `Y = ${displayFormula}`;
+                
+                // 解析公式并动态生成输入框
+                const parsed = parseFormula(formula);
+                generateVariableInputs(parsed.variables);
+                generateConstantInputs(parsed.constants);
+            }
+            
+            // 更新常数显示
+            function updateConstantsDisplay() {
+                for (const constant in currentConstants) {
+                    if (document.getElementById(`constant${constant}Value`)) {
+                        document.getElementById(`constant${constant}Value`).textContent = 
+                            formatScientific(currentConstants[constant]);
+                        
+                        if (!lockedConstants[constant]) {
+                            document.getElementById(`constant${constant}`).value = 
+                                currentConstants[constant];
+                        }
+                    }
+                }
+            }
+            
+            // 格式化科学计数法显示
+            function formatScientific(value) {
+                if (Math.abs(value) >= 1e6 || (Math.abs(value) < 0.001 && value !== 0)) {
+                    return value.toExponential(3);
+                }
+                return value.toString();
+            }
+            
+            // 修正浮点数精度问题
+            function fixFloatingPointPrecision(value) {
+                // 处理非常接近0的值（通常是三角函数计算误差）
+                if (Math.abs(value) < 1e-14) {
+                    return 0;
+                }
+                
+                // 处理非常接近整数的值
+                const rounded = Math.round(value);
+                if (Math.abs(value - rounded) < 1e-14) {
+                    return rounded;
+                }
+                
+                // 处理非常接近常见小数的值（如 0.5, 0.25, 0.75 等）
+                const commonFractions = [0.5, 0.25, 0.75, 0.125, 0.375, 0.625, 0.875];
+                for (const fraction of commonFractions) {
+                    if (Math.abs(value - fraction) < 1e-14) {
+                        return fraction;
+                    }
+                    if (Math.abs(value + fraction) < 1e-14) {
+                        return -fraction;
+                    }
+                }
+                
+                // 处理非常接近 ±1 的值（常见于三角函数）
+                if (Math.abs(Math.abs(value) - 1) < 1e-14) {
+                    return value > 0 ? 1 : -1;
+                }
+                
+                // 处理非常接近 ±0.5 的值（常见于 sin(π/6), cos(π/3) 等）
+                if (Math.abs(Math.abs(value) - 0.5) < 1e-14) {
+                    return value > 0 ? 0.5 : -0.5;
+                }
+                
+                // 处理非常接近 ±√2/2 ≈ ±0.7071067811865476 的值（常见于 sin(π/4), cos(π/4)）
+                const sqrt2Half = Math.sqrt(2) / 2;
+                if (Math.abs(Math.abs(value) - sqrt2Half) < 1e-14) {
+                    return value > 0 ? sqrt2Half : -sqrt2Half;
+                }
+                
+                // 处理非常接近 ±√3/2 ≈ ±0.8660254037844387 的值（常见于 sin(π/3), cos(π/6)）
+                const sqrt3Half = Math.sqrt(3) / 2;
+                if (Math.abs(Math.abs(value) - sqrt3Half) < 1e-14) {
+                    return value > 0 ? sqrt3Half : -sqrt3Half;
+                }
+                
+                return value;
+            }
+            
+            // 初始化
+            function init() {
+                // 从本地存储加载历史记录
+                const savedHistory = localStorage.getItem('calculationHistory');
+                if (savedHistory) {
+                    calculationHistory = JSON.parse(savedHistory);
+                    updateHistoryDisplay();
+                }
+                
+                // 从本地存储加载常数配置
+                const savedConstants = localStorage.getItem('savedConstants');
+                if (savedConstants) {
+                    currentConstants = JSON.parse(savedConstants);
+                }
+                
+                // 从本地存储加载保存的公式
+                const savedFormulasData = localStorage.getItem('savedFormulas');
+                if (savedFormulasData) {
+                    savedFormulas = JSON.parse(savedFormulasData);
+                    updateFormulaSelect();
+                }
+                
+                // 初始化公式显示
+                updateFormulaDisplay();
+                
+                // 添加公式输入框事件监听器
+                formulaInput.addEventListener('input', updateFormulaDisplay);
+                formulaInput.addEventListener('blur', updateFormulaDisplay);
+                
+                // 移动端优化
+                initMobileFeatures();
+            }
+            
+            // 移动端功能初始化
+            function initMobileFeatures() {
+                // 检测是否为移动设备
+                const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                
+                if (isMobile) {
+                    // 添加移动端样式类
+                    document.body.classList.add('mobile-device');
+                    
+                    // 优化输入框体验
+                    const inputs = document.querySelectorAll('input[type="number"]');
+                    inputs.forEach(input => {
+                        // 添加输入模式
+                        input.setAttribute('inputmode', 'decimal');
+                        input.setAttribute('pattern', '[0-9]*');
+                        
+                        // 防止滚动时意外触发输入
+                        input.addEventListener('focus', function() {
+                            setTimeout(() => {
+                                this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }, 300);
+                        });
+                    });
+                    
+                    // 添加触摸反馈
+                    const buttons = document.querySelectorAll('button');
+                    buttons.forEach(button => {
+                        button.addEventListener('touchstart', function() {
+                            this.style.transform = 'scale(0.95)';
+                        });
+                        
+                        button.addEventListener('touchend', function() {
+                            this.style.transform = '';
+                        });
+                    });
+                    
+                    // 优化历史记录滚动
+                    const historyList = document.getElementById('historyList');
+                    historyList.style.webkitOverflowScrolling = 'touch';
+                }
+                
+                // 初始化快速输入栏
+                initQuickInputBar();
+                
+                // 检测屏幕方向变化
+                if (window.screen && screen.orientation) {
+                    screen.orientation.addEventListener('change', function() {
+                        setTimeout(() => {
+                            // 重新计算布局
+                            window.dispatchEvent(new Event('resize'));
+                        }, 500);
+                    });
+                }
+                
+                // 添加键盘事件
+                document.addEventListener('keydown', function(e) {
+                    // Enter键执行计算
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        const activeElement = document.activeElement;
+                        if (activeElement.tagName === 'INPUT') {
+                            e.preventDefault();
+                            performCalculation();
+                        }
+                    }
+                    
+                    // Ctrl+S 保存常数
+                    if (e.ctrlKey && e.key === 's') {
+                        e.preventDefault();
+                        saveConstants();
+                    }
+                });
+            }
+            
+            // 初始化快速输入栏
+            function initQuickInputBar() {
+                const quickButtons = document.querySelectorAll('.quick-btn');
+                
+                quickButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const symbol = this.getAttribute('data-symbol');
+                        insertSymbolToFormula(symbol);
+                        hideSwipeHint();
+                    });
+                });
+                
+                // 显示使用提示（仅移动端第一次使用）
+                if (window.innerWidth <= 768 && !localStorage.getItem('hintShown')) {
+                    setTimeout(showSwipeHint, 2000);
+                }
+            }
+            
+            // 显示滑动提示
+            function showSwipeHint() {
+                const hint = document.getElementById('swipeHint');
+                hint.classList.add('show');
+                setTimeout(hideSwipeHint, 3000);
+            }
+            
+            // 隐藏滑动提示
+            function hideSwipeHint() {
+                const hint = document.getElementById('swipeHint');
+                hint.classList.remove('show');
+                localStorage.setItem('hintShown', 'true');
+            }
+            
+            // 插入符号到公式输入框
+            function insertSymbolToFormula(symbol) {
+                const input = formulaInput;
+                const start = input.selectionStart;
+                const end = input.selectionEnd;
+                const currentValue = input.value;
+                
+                // 处理特殊符号转换
+                let insertSymbol = symbol;
+                let cursorOffset = 0; // 光标偏移量
+                
+                switch(symbol) {
+                    case 'PI':
+                        insertSymbol = 'PI';
+                        break;
+                    case 'E':
+                        insertSymbol = 'E';
+                        break;
+                    case '^':
+                        insertSymbol = '^2';
+                        cursorOffset = -1; // 光标放在2前面，方便修改指数
+                        break;
+                    case '*':
+                        insertSymbol = '*';
+                        break;
+                    case '/':
+                        insertSymbol = '/';
+                        break;
+                    case '+':
+                        insertSymbol = '+';
+                        break;
+                    case '-':
+                        insertSymbol = '-';
+                        break;
+                    case 'sin':
+                        insertSymbol = 'sin(';
+                        break;
+                    case 'cos':
+                        insertSymbol = 'cos(';
+                        break;
+                    case 'tan':
+                        insertSymbol = 'tan(';
+                        break;
+                    case 'log':
+                        insertSymbol = 'log(';
+                        break;
+                    case 'ln':
+                        insertSymbol = 'ln(';
+                        break;
+                    case 'sqrt':
+                        insertSymbol = 'sqrt(';
+                        break;
+                    case 'abs':
+                        insertSymbol = 'abs(';
+                        break;
+                    default:
+                        insertSymbol = symbol;
+                }
+                
+                // 插入符号
+                const newValue = currentValue.substring(0, start) + insertSymbol + currentValue.substring(end);
+                input.value = newValue;
+                
+                // 设置光标位置
+                const newCursorPos = start + insertSymbol.length + cursorOffset;
+                input.setSelectionRange(newCursorPos, newCursorPos);
+                
+                // 触发更新
+                input.focus();
+                updateFormulaDisplay();
+            }
+            
+            // 保存公式
+            function saveFormula() {
+                const formula = formulaInput.value.trim();
+                if (!formula) {
+                    showNotification('⚠️ 请先输入公式！', 'warning');
+                    return;
+                }
+                
+                // 检查是否已存在相同公式
+                const existingFormula = savedFormulas.find(f => f.formula === formula);
+                if (existingFormula) {
+                    showNotification('⚠️ 该公式已存在！', 'warning');
+                    return;
+                }
+                
+                // 弹出对话框让用户输入公式名称
+                const suggestedName = generateFormulaName(formula);
+                const name = prompt(`📝 请为公式输入一个名称：\n\n公式: ${formula}\n建议名称:`, suggestedName);
+                if (!name) return;
+                
+                // 检查名称是否已存在
+                const existingName = savedFormulas.find(f => f.name === name);
+                if (existingName) {
+                    if (!confirm(`⚠️ 名称"${name}"已存在，是否覆盖现有公式？\n\n现有公式: ${existingName.formula}\n新公式: ${formula}`)) {
+                        return;
+                    }
+                    // 删除旧的公式
+                    const index = savedFormulas.findIndex(f => f.name === name);
+                    savedFormulas.splice(index, 1);
+                }
+                
+                // 解析公式获取变量和常数信息
+                const parsed = parseFormula(formula);
+                
+                // 保存公式
+                const formulaData = {
+                    id: Date.now(),
+                    name: name,
+                    formula: formula,
+                    variables: parsed.variables,
+                    constants: parsed.constants,
+                    createTime: new Date().toLocaleString()
+                };
+                
+                savedFormulas.push(formulaData);
+                
+                // 保存到本地存储
+                localStorage.setItem('savedFormulas', JSON.stringify(savedFormulas));
+                
+                // 更新选择框
+                updateFormulaSelect();
+                
+                // 显示成功消息
+                showNotification(`✅ 公式"${name}"已保存！`, 'success');
+            }
+            
+            // 生成公式名称建议
+            function generateFormulaName(formula) {
+                // 根据公式内容生成建议名称
+                if (formula.includes('G') && formula.includes('M') && formula.includes('m')) {
+                    return '万有引力公式';
+                } else if (formula.includes('PI') && formula.includes('r')) {
+                    return '圆形面积/周长公式';
+                } else if (formula.includes('^2')) {
+                    return '二次方程';
+                } else if (formula.includes('sin') || formula.includes('cos') || formula.includes('tan')) {
+                    return '三角函数';
+                } else {
+                    return '自定义公式';
+                }
+            }
+            
+            // 更新公式选择框
+            function updateFormulaSelect() {
+                formulaSelect.innerHTML = '<option value="">💡 选择已保存的公式...</option>';
+                
+                savedFormulas.forEach(formulaData => {
+                    const option = document.createElement('option');
+                    option.value = formulaData.id;
+                    option.className = 'formula-option';
+                    
+                    // 截断过长的公式显示
+                    let displayFormula = formulaData.formula;
+                    if (displayFormula.length > 30) {
+                        displayFormula = displayFormula.substring(0, 30) + '...';
+                    }
+                    
+                    option.textContent = `📐 ${formulaData.name} → ${displayFormula}`;
+                    option.title = `公式: ${formulaData.formula}\n创建时间: ${formulaData.createTime}`; // 鼠标悬停显示完整信息
+                    formulaSelect.appendChild(option);
+                });
+                
+                // 添加管理选项
+                if (savedFormulas.length > 0) {
+                    const separator = document.createElement('option');
+                    separator.disabled = true;
+                    separator.textContent = '────────────────';
+                    separator.style.color = '#ccc';
+                    formulaSelect.appendChild(separator);
+                    
+                    const deleteOption = document.createElement('option');
+                    deleteOption.value = 'delete';
+                    deleteOption.textContent = '🗑️ 管理已保存的公式';
+                    deleteOption.style.color = '#e74c3c';
+                    deleteOption.style.fontWeight = '600';
+                    formulaSelect.appendChild(deleteOption);
+                }
+            }
+            
+            // 加载选中的公式
+            function loadSelectedFormula() {
+                const selectedId = formulaSelect.value;
+                
+                if (selectedId === 'delete') {
+                    manageFormulas();
+                    formulaSelect.value = '';
+                    return;
+                }
+                
+                if (!selectedId) return;
+                
+                const formulaData = savedFormulas.find(f => f.id == selectedId);
+                if (formulaData) {
+                    formulaInput.value = formulaData.formula;
+                    updateFormulaDisplay();
+                    
+                    // 显示加载消息
+                    showNotification(`✅ 已加载公式："${formulaData.name}"`, 'info');
+                }
+            }
+            
+            // 管理公式（删除功能）
+            function manageFormulas() {
+                if (savedFormulas.length === 0) {
+                    showNotification('没有保存的公式！', 'info');
+                    return;
+                }
+                
+                let message = '📋 已保存的公式管理\n\n';
+                savedFormulas.forEach((formulaData, index) => {
+                    const truncatedFormula = formulaData.formula.length > 40 
+                        ? formulaData.formula.substring(0, 40) + '...' 
+                        : formulaData.formula;
+                    message += `${index + 1}. 📐 ${formulaData.name}\n`;
+                    message += `   公式: ${truncatedFormula}\n`;
+                    message += `   创建: ${formulaData.createTime}\n\n`;
+                });
+                
+                message += '请输入要删除的公式编号（输入 0 取消）：';
+                
+                const choice = prompt(message);
+                if (!choice || choice === '0') return;
+                
+                const index = parseInt(choice) - 1;
+                if (index >= 0 && index < savedFormulas.length) {
+                    const formulaToDelete = savedFormulas[index];
+                    if (confirm(`🗑️ 确定要删除公式"${formulaToDelete.name}"吗？\n\n公式: ${formulaToDelete.formula}\n\n此操作不可撤销！`)) {
+                        savedFormulas.splice(index, 1);
+                        localStorage.setItem('savedFormulas', JSON.stringify(savedFormulas));
+                        updateFormulaSelect();
+                        
+                        showNotification(`公式"${formulaToDelete.name}"已删除！`, 'success');
+                    }
+                } else {
+                    showNotification('❌ 无效的编号！', 'error');
+                }
+            }
+            
+            // 显示美化的通知消息
+            function showNotification(message, type = 'info') {
+                const colors = {
+                    success: 'linear-gradient(to right, #2ecc71, #27ae60)',
+                    error: 'linear-gradient(to right, #e74c3c, #c0392b)',
+                    info: 'linear-gradient(to right, #3498db, #2980b9)',
+                    warning: 'linear-gradient(to right, #f39c12, #e67e22)'
+                };
+                
+                resultDisplay.textContent = message;
+                resultDisplay.style.background = colors[type] || colors.info;
+                setTimeout(() => {
+                    resultDisplay.style.background = "#1a2980";
+                }, 3000);
+            }
+            
+            // 保存常数配置
+            function saveConstants() {
+                // 更新未锁定的常数值
+                for (const constant in currentConstants) {
+                    if (!lockedConstants[constant] && document.getElementById(`constant${constant}`)) {
+                        currentConstants[constant] = parseFloat(document.getElementById(`constant${constant}`).value) || defaultConstants[constant];
+                    }
+                }
+                
+                // 更新显示
+                updateConstantsDisplay();
+                
+                // 保存到本地存储
+                localStorage.setItem('savedConstants', JSON.stringify(currentConstants));
+                
+                // 显示成功消息
+                resultDisplay.textContent = "常数配置已保存!";
+                resultDisplay.style.background = "linear-gradient(to right, #2ecc71, #27ae60)";
+                setTimeout(() => {
+                    resultDisplay.style.background = "#1a2980";
+                }, 2000);
+            }
+            
+            // 重置常数配置
+            function resetConstants() {
+                currentConstants = {...defaultConstants};
+                updateConstantsDisplay();
+                
+                // 重置锁定状态
+                for (const constant in lockedConstants) {
+                    lockedConstants[constant] = false;
+                    document.getElementById(`lock${constant}`).checked = false;
+                    document.getElementById(`constant${constant}`).disabled = false;
+                }
+                
+                // 从本地存储移除保存的配置
+                localStorage.removeItem('savedConstants');
+                
+                // 显示成功消息
+                resultDisplay.textContent = "常数配置已重置为默认值!";
+                resultDisplay.style.background = "linear-gradient(to right, #3498db, #2980b9)";
+                setTimeout(() => {
+                    resultDisplay.style.background = "#1a2980";
+                }, 2000);
+            }
+            
+            // 预处理公式，替换数学关键字
+            function preprocessFormula(formula) {
+                let processedFormula = formula;
+                
+                // 先处理隐式乘法，再替换数学函数（避免冲突）
+                // 处理数字后跟字母（如 2PI, 3E, 5x 等）
+                processedFormula = processedFormula.replace(/(\d+)([a-zA-Z])/g, '$1*$2');
+                // 处理右括号后跟字母或左括号的情况（如 (x+1)PI, (a+b)(c+d) 等）
+                processedFormula = processedFormula.replace(/\)([a-zA-Z(])/g, ')*$1');
+                // 处理字母后跟左括号的情况（如 x(y+1), PI(x+1) 等）
+                processedFormula = processedFormula.replace(/([a-zA-Z])\(/g, '$1*(');
+                
+                // 然后替换数学函数，这时隐式乘法已经处理完毕
+                processedFormula = processedFormula.replace(/\bsqrt\s*\*\s*\(/g, 'Math.sqrt(');
+                processedFormula = processedFormula.replace(/\bsin\s*\*\s*\(/g, 'Math.sin(');
+                processedFormula = processedFormula.replace(/\bcos\s*\*\s*\(/g, 'Math.cos(');
+                processedFormula = processedFormula.replace(/\btan\s*\*\s*\(/g, 'Math.tan(');
+                processedFormula = processedFormula.replace(/\basin\s*\*\s*\(/g, 'Math.asin(');
+                processedFormula = processedFormula.replace(/\bacos\s*\*\s*\(/g, 'Math.acos(');
+                processedFormula = processedFormula.replace(/\batan\s*\*\s*\(/g, 'Math.atan(');
+                processedFormula = processedFormula.replace(/\blog\s*\*\s*\(/g, 'Math.log10(');
+                processedFormula = processedFormula.replace(/\bln\s*\*\s*\(/g, 'Math.log(');
+                processedFormula = processedFormula.replace(/\blog10\s*\*\s*\(/g, 'Math.log10(');
+                processedFormula = processedFormula.replace(/\blog2\s*\*\s*\(/g, 'Math.log2(');
+                processedFormula = processedFormula.replace(/\babs\s*\*\s*\(/g, 'Math.abs(');
+                processedFormula = processedFormula.replace(/\bexp\s*\*\s*\(/g, 'Math.exp(');
+                processedFormula = processedFormula.replace(/\bceil\s*\*\s*\(/g, 'Math.ceil(');
+                processedFormula = processedFormula.replace(/\bfloor\s*\*\s*\(/g, 'Math.floor(');
+                processedFormula = processedFormula.replace(/\bround\s*\*\s*\(/g, 'Math.round(');
+                
+                // 最后替换数学常数
+                processedFormula = processedFormula.replace(/\bPI\b/g, Math.PI);
+                processedFormula = processedFormula.replace(/\bpi\b/g, Math.PI);
+                processedFormula = processedFormula.replace(/\bE\b(?![a-zA-Z0-9_])/g, Math.E);
+                
+                // 处理幂运算
+                processedFormula = processedFormula.replace(/\^/g, '**');
+                
+                return processedFormula;
+            }
+            
+            // 执行计算
+            function performCalculation() {
+                const formula = formulaInput.value.trim() || 'G * (M * m / (r * r))';
+                const parsed = parseFormula(formula);
+                
+                // 收集所有变量值
+                const variables = {};
+                let hasInvalidVariable = false;
+                
+                parsed.variables.forEach(variable => {
+                    const input = document.getElementById(`variable${variable}`);
+                    if (input) {
+                        const value = parseFloat(input.value);
+                        if (isNaN(value)) {
+                            hasInvalidVariable = true;
+                            return;
+                        }
+                        variables[variable] = value;
+                    } else {
+                        hasInvalidVariable = true;
+                    }
+                });
+                
+                if (hasInvalidVariable) {
+                    resultDisplay.textContent = "请输入有效的变量值!";
+                    resultDisplay.style.background = "#e74c3c";
+                    setTimeout(() => {
+                        resultDisplay.style.background = "#1a2980";
+                    }, 2000);
+                    return;
+                }
+                
+                try {
+                    // 预处理公式
+                    let processedFormula = preprocessFormula(formula);
+                    
+                    // 替换变量
+                    parsed.variables.forEach(variable => {
+                        const regex = new RegExp(`\\b${variable}\\b`, 'g');
+                        processedFormula = processedFormula.replace(regex, variables[variable]);
+                    });
+                    
+                    // 替换常数
+                    parsed.constants.forEach(constant => {
+                        const value = currentConstants[constant] || 1;
+                        const regex = new RegExp(`\\b${constant}\\b`, 'g');
+                        processedFormula = processedFormula.replace(regex, value);
+                    });
+                    
+                    // 计算结果
+                    let result = eval(processedFormula);
+                    
+                    // 处理浮点数精度问题，将非常接近整数或0的值修正
+                    result = fixFloatingPointPrecision(result);
+                    
+                    // 显示结果
+                    if (isNaN(result) || !isFinite(result)) {
+                        throw new Error('计算结果无效');
+                    }
+                    
+                    resultDisplay.textContent = `结果 = ${formatScientific(result)}`;
+                    resultDisplay.style.background = "#1a2980";
+                    
+                    // 添加到历史记录
+                    const historyEntry = {
+                        formula: formula,
+                        variables: {...variables},
+                        constants: {...currentConstants},
+                        result: result,
+                        timestamp: new Date().toLocaleString()
+                    };
+                    
+                    calculationHistory.push(historyEntry);
+                    if (calculationHistory.length > 20) calculationHistory.shift(); // 限制历史记录数量
+                    
+                    // 更新显示和本地存储
+                    updateHistoryDisplay();
+                    localStorage.setItem('calculationHistory', JSON.stringify(calculationHistory));
+                    
+                } catch (error) {
+                    resultDisplay.textContent = "计算错误: " + error.message;
+                    resultDisplay.style.background = "#e74c3c";
+                    setTimeout(() => {
+                        resultDisplay.style.background = "#1a2980";
+                    }, 2000);
+                }
+            }
+            
+            // 更新历史记录显示
+            function updateHistoryDisplay() {
+                if (calculationHistory.length === 0) {
+                    historyList.innerHTML = `
+                        <div class="empty-history">
+                            <i class="fas fa-clock"></i>
+                            <h3>暂无计算记录</h3>
+                            <p>开始计算后，历史记录将显示在这里</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                historyList.innerHTML = '';
+                
+                // 从最新记录开始显示
+                calculationHistory.slice().reverse().forEach((entry, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'history-item';
+                    
+                    // 格式化公式显示
+                    const displayFormula = entry.formula
+                        .replace(/\*/g, '×')
+                        .replace(/\//g, '÷')
+                        .replace(/\^/g, '')
+                        .replace(/r\s*\*\s*r/g, 'r²');
+                    
+                    // 创建变量显示
+                    let variablesHtml = '';
+                    for (const [key, value] of Object.entries(entry.variables)) {
+                        variablesHtml += `<span class="history-variable">${key} = ${value}</span>`;
+                    }
+                    
+                    item.innerHTML = `
+                        <div class="history-content">
+                            <div class="history-formula">${displayFormula}</div>
+                            <div class="history-variables">
+                                ${variablesHtml}
+                                <span class="history-variable">时间: ${entry.timestamp}</span>
+                            </div>
+                        </div>
+                        <div class="history-result">${formatScientific(entry.result)}</div>
+                    `;
+                    
+                    historyList.appendChild(item);
+                });
+            }
+            
+            // 清除历史记录
+            function clearHistory() {
+                if (calculationHistory.length === 0) return;
+                
+                if (confirm('确定要清除所有历史记录吗？')) {
+                    calculationHistory = [];
+                    updateHistoryDisplay();
+                    localStorage.removeItem('calculationHistory');
+                }
+            }
+            
+            // 事件监听器设置
+            calculateBtn.addEventListener('click', performCalculation);
+            clearHistoryBtn.addEventListener('click', clearHistory);
+            saveConstantsBtn.addEventListener('click', saveConstants);
+            resetConstantsBtn.addEventListener('click', resetConstants);
+            saveFormulaBtn.addEventListener('click', saveFormula);
+            formulaSelect.addEventListener('change', loadSelectedFormula);
+            
+            // 初始化应用
+            init();
+        });
+    </script>
+</body>
+</html>
