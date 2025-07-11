@@ -1,133 +1,470 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Page Not Found :(</title><style>::-moz-selection {
-        background: #b3d4fc;
-        text-shadow: none;
-      }
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>页面未找到 | Xi Han</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-      ::selection {
-        background: #b3d4fc;
-        text-shadow: none;
-      }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
 
-      html {
-        padding: 30px 10px;
-        font-size: 20px;
-        line-height: 1.4;
-        color: #737373;
-        background: #f0f0f0;
-        -webkit-text-size-adjust: 100%;
-        -ms-text-size-adjust: 100%;
-      }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px 40px;
+            max-width: 900px;
+            width: 90%;
+            text-align: center;
+            animation: fadeInUp 0.6s ease forwards;
+        }
 
-      html,
-      input {
-        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-      body {
-        max-width: 500px;
-        _width: 500px;
-        padding: 30px 20px 50px;
-        border: 1px solid #b3b3b3;
-        border-radius: 4px;
-        margin: 0 auto;
-        box-shadow: 0 1px 10px #a7a7a7, inset 0 1px 0 #fff;
-        background: #fcfcfc;
-      }
+        .error-icon {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 20px;
+            display: block;
+            animation: bounce 2s infinite;
+        }
 
-      h1 {
-        margin: 0 10px;
-        font-size: 50px;
-        text-align: center;
-      }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
 
-      h1 span {
-        color: #bbb;
-      }
+        .error-code {
+            font-size: 6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            line-height: 1;
+        }
 
-      h3 {
-        margin: 1.5em 0 0.5em;
-      }
+        .error-title {
+            font-size: 2rem;
+            color: #553c9a;
+            margin-bottom: 15px;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(85, 60, 154, 0.3);
+        }
 
-      p {
-        margin: 1em 0;
-      }
+        .error-message {
+            font-size: 1.1rem;
+            color: #667eea;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-weight: 500;
+            text-shadow: 0 1px 2px rgba(102, 126, 234, 0.2);
+        }
 
-      ul {
-        padding: 0 0 0 40px;
-        margin: 1em 0;
-      }
+        .error-details {
+            background: #f8f9ff;
+            border: 1px solid #e0e5ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: left;
+            border-left: 4px solid #667eea;
+        }
 
-      .container {
-        max-width: 380px;
-        _width: 380px;
-        margin: 0 auto;
-      }
+        .error-details h3 {
+            color: #553c9a;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
 
-      /* google search */
+        .error-details h3 i {
+            color: #764ba2;
+        }
 
-      #goog-fixurl ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
+        .error-details ul {
+            list-style: none;
+            padding: 0;
+        }
 
-      #goog-fixurl form {
-        margin: 0;
-      }
+        .error-details li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #5a6c7d;
+            font-weight: 500;
+        }
 
-      #goog-wm-qt,
-      #goog-wm-sb {
-        border: 1px solid #bbb;
-        font-size: 16px;
-        line-height: normal;
-        vertical-align: top;
-        color: #444;
-        border-radius: 2px;
-      }
+        .error-details li i {
+            color: #764ba2;
+            width: 16px;
+        }
 
-      #goog-wm-qt {
-        width: 220px;
-        height: 20px;
-        padding: 5px;
-        margin: 5px 10px 0 0;
-        box-shadow: inset 0 1px 1px #ccc;
-      }
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
 
-      #goog-wm-sb {
-        display: inline-block;
-        height: 32px;
-        padding: 0 10px;
-        margin: 5px 0 0;
-        white-space: nowrap;
-        cursor: pointer;
-        background-color: #f5f5f5;
-        background-image: -webkit-linear-gradient(rgba(255,255,255,0), #f1f1f1);
-        background-image: -moz-linear-gradient(rgba(255,255,255,0), #f1f1f1);
-        background-image: -ms-linear-gradient(rgba(255,255,255,0), #f1f1f1);
-        background-image: -o-linear-gradient(rgba(255,255,255,0), #f1f1f1);
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        *overflow: visible;
-        *display: inline;
-        *zoom: 1;
-      }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            min-width: 150px;
+            justify-content: center;
+        }
 
-      #goog-wm-sb:hover,
-      #goog-wm-sb:focus {
-        border-color: #aaa;
-        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-        background-color: #f8f8f8;
-      }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
 
-      #goog-wm-qt:hover,
-      #goog-wm-qt:focus {
-        border-color: #105cb6;
-        outline: 0;
-        color: #222;
-      }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
 
-      input::-moz-focus-inner {
-        padding: 0;
-        border: 0;
-      }</style><body><div class="container"><h1>Not found <span>:(</span></h1><p>Sorry, but the page you were trying to view does not exist.</p><p>It looks like this was the result of either:</p><ul><li>a mistyped address</li><li>an out-of-date link</li></ul><script>var GOOG_FIXURL_LANG = (navigator.language || '').slice(0,2),GOOG_FIXURL_SITE = location.host;</script><script src="//linkhelp.clients.google.com/tbproxy/lh/wm/fixurl.js"></script></div>
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+            box-shadow: 0 5px 15px rgba(149, 165, 166, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(149, 165, 166, 0.4);
+        }
+
+        .search-container {
+            background: #f8f9ff;
+            border: 1px solid #e0e5ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 25px 0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #667eea;
+        }
+
+        .search-title {
+            color: #553c9a;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            font-weight: 700;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-title i {
+            color: #764ba2;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 10px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 1px solid #e0e5ff;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .search-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .footer-info {
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid #e8ecf0;
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+
+        .footer-info a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-info a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1000px) {
+            .container {
+                max-width: 700px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 30px 25px;
+                width: 95%;
+            }
+
+            .error-code {
+                font-size: 4rem;
+            }
+
+            .error-title {
+                font-size: 1.5rem;
+            }
+
+            .error-message {
+                font-size: 1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-input,
+            .search-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .error-code {
+                font-size: 3rem;
+            }
+
+            .error-title {
+                font-size: 1.3rem;
+            }
+
+            .error-icon {
+                font-size: 3rem;
+            }
+        }
+
+        /* 深色模式支持 */
+        @media (prefers-color-scheme: dark) {
+            .container {
+                background: rgba(45, 52, 73, 0.95);
+                color: #e8ecf0;
+            }
+
+            .error-details,
+            .search-container {
+                background: rgba(52, 63, 86, 0.8);
+                border-color: rgba(255, 255, 255, 0.1);
+            }
+
+            .search-input {
+                background: rgba(45, 52, 73, 0.5);
+                border-color: rgba(255, 255, 255, 0.1);
+                color: #e8ecf0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <i class="fas fa-exclamation-triangle error-icon"></i>
+        
+        <div class="error-code">404</div>
+        
+        <h1 class="error-title">页面未找到</h1>
+        
+        <p class="error-message">
+            抱歉，您访问的页面不存在或已被移动。<br>
+            请检查网址是否正确，或尝试其他方式找到您需要的内容。
+        </p>
+
+        <div class="error-details">
+            <h3>
+                <i class="fas fa-info-circle"></i>
+                可能的原因
+            </h3>
+            <ul>
+                <li>
+                    <i class="fas fa-times"></i>
+                    网址输入错误或拼写有误
+                </li>
+                <li>
+                    <i class="fas fa-times"></i>
+                    页面已被删除或重新组织
+                </li>
+                <li>
+                    <i class="fas fa-times"></i>
+                    链接已过期或失效
+                </li>
+                <li>
+                    <i class="fas fa-times"></i>
+                    服务器临时维护
+                </li>
+            </ul>
+        </div>
+
+        <div class="search-container">
+            <h3 class="search-title">
+                <i class="fas fa-search"></i>
+                搜索内容
+            </h3>
+            <div class="search-form">
+                <input type="text" class="search-input" placeholder="输入搜索关键词..." id="searchInput">
+                <button class="search-btn" onclick="performSearch()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="index.html" class="btn btn-primary">
+                <i class="fas fa-home"></i>
+                返回首页
+            </a>
+            <button class="btn btn-secondary" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+                返回上页
+            </button>
+        </div>
+
+        <div class="footer-info">
+            <p>如果问题持续存在，请联系 <a href="mailto:a@xi-han.top">a@xi-han.top</a></p>
+            <p>或访问 <a href="index.html">Xi Han 主页</a> 获取更多帮助</p>
+        </div>
+    </div>
+
+    <script>
+        // 返回上一页
+        function goBack() {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // 执行搜索
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (query) {
+                // 可以根据需要修改搜索引擎
+                const searchUrl = `https://www.google.com/search?q=site:${window.location.hostname} ${encodeURIComponent(query)}`;
+                window.open(searchUrl, '_blank');
+            } else {
+                alert('请输入搜索关键词');
+            }
+        }
+
+        // 回车键搜索
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.querySelector('.container');
+            container.style.opacity = '0';
+            container.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                container.style.transition = 'all 0.6s ease';
+                container.style.opacity = '1';
+                container.style.transform = 'translateY(0)';
+            }, 100);
+        });
+
+        // 记录 404 错误（可选）
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'page_view', {
+                page_title: '404 Error',
+                page_location: window.location.href
+            });
+        }
+    </script>
+</body>
+</html>

@@ -39,15 +39,20 @@
             color: white;
             padding: 30px;
             border-radius: 20px;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
         }
         
         header h1 {
             font-size: 2.8rem;
             margin-bottom: 15px;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+            color: #553c9a;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         header p {
@@ -55,6 +60,7 @@
             max-width: 700px;
             margin: 0 auto;
             line-height: 1.7;
+            color: #6c757d;
         }
         
         .app-container {
@@ -66,10 +72,10 @@
         }
         
         .calculator, .history {
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             backdrop-filter: blur(5px);
         }
         
@@ -82,17 +88,18 @@
         .section-title {
             font-size: 1.8rem;
             margin-bottom: 25px;
-            color: #1a2980;
+            color: #553c9a;
             display: flex;
             align-items: center;
             gap: 12px;
             padding-bottom: 15px;
             border-bottom: 2px solid #eaeaea;
+            text-shadow: 0 1px 3px rgba(85, 60, 154, 0.2);
         }
         
         .section-title i {
             font-size: 1.5rem;
-            color: #26d0ce;
+            color: #667eea;
         }
         
         .formula-container {
@@ -107,7 +114,7 @@
             text-align: center;
             font-size: 1.8rem;
             font-family: 'Courier New', monospace;
-            color: #1a2980;
+            color: #553c9a;
             padding: 15px;
             margin: 15px 0;
             background: white;
@@ -256,7 +263,7 @@
         }
         
         .save-formula-btn {
-            background: #3498db;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             border: none;
             border-radius: 8px;
@@ -273,7 +280,7 @@
         }
         
         .save-formula-btn:hover {
-            background: #2980b9;
+            background: linear-gradient(135deg, #5a6fd8, #6a4190);
             transform: translateY(-2px);
         }
         
@@ -305,16 +312,16 @@
         
         .formula-select:focus {
             outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
-            background-image: linear-gradient(45deg, #3498db 50%, transparent 50%), 
-                              linear-gradient(135deg, transparent 50%, #3498db 50%);
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+            background-image: linear-gradient(45deg, #667eea 50%, transparent 50%), 
+                              linear-gradient(135deg, transparent 50%, #667eea 50%);
         }
         
         .formula-select:hover {
-            border-color: #3498db;
-            background-image: linear-gradient(45deg, transparent 50%, #3498db 50%), 
-                              linear-gradient(135deg, #3498db 50%, transparent 50%);
+            border-color: #667eea;
+            background-image: linear-gradient(45deg, transparent 50%, #667eea 50%), 
+                              linear-gradient(135deg, #667eea 50%, transparent 50%);
         }
         
         /* 自定义选项样式 */
@@ -380,7 +387,7 @@
             display: block;
             margin-bottom: 10px;
             font-weight: 600;
-            color: #1a2980;
+            color: #553c9a;
             font-size: 1.1rem;
             display: flex;
             align-items: center;
@@ -388,7 +395,7 @@
         }
         
         .input-group label i {
-            color: #26d0ce;
+            color: #667eea;
             font-size: 1.2rem;
         }
         
@@ -403,8 +410,8 @@
         
         input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #1a2980;
-            box-shadow: 0 0 0 4px rgba(26, 41, 128, 0.15);
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
         }
         
         .variables-container {
@@ -427,7 +434,7 @@
         .variable-item label {
             min-width: 80px;
             font-weight: 600;
-            color: #1a2980;
+            color: #553c9a;
         }
         
         .variable-item input {
@@ -457,14 +464,14 @@
         
         .constant-name {
             font-weight: 700;
-            color: #1a2980;
+            color: #553c9a;
             font-size: 1.1rem;
         }
         
         .constant-value {
             font-size: 1.2rem;
             font-weight: 600;
-            color: #26d0ce;
+            color: #667eea;
         }
         
         .buttons {
@@ -488,38 +495,38 @@
         }
         
         .calculate-btn {
-            background: linear-gradient(to right, #1a2980, #26d0ce);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             grid-column: span 2;
         }
         
         .calculate-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(26, 41, 128, 0.4);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
         }
         
         .save-btn {
-            background: #2ecc71;
+            background: linear-gradient(135deg, #52c41a, #389e0d);
             color: white;
         }
         
         .save-btn:hover {
-            background: #27ae60;
+            background: linear-gradient(135deg, #389e0d, #237804);
             transform: translateY(-3px);
         }
         
         .clear-btn {
-            background: #e74c3c;
+            background: linear-gradient(135deg, #ff4d4f, #cf1322);
             color: white;
         }
         
         .clear-btn:hover {
-            background: #c0392b;
+            background: linear-gradient(135deg, #cf1322, #a8071a);
             transform: translateY(-3px);
         }
         
         .result-display {
-            background: #1a2980;
+            background: linear-gradient(135deg, #667eea, #764ba2);
             padding: 25px;
             border-radius: 15px;
             text-align: center;
@@ -527,7 +534,7 @@
             font-weight: 700;
             color: white;
             margin-top: 20px;
-            box-shadow: 0 8px 20px rgba(26, 41, 128, 0.3);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
         }
         
         .history-list {
@@ -544,7 +551,7 @@
             padding: 20px;
             border-radius: 15px;
             margin-bottom: 15px;
-            border-left: 4px solid #26d0ce;
+            border-left: 4px solid #667eea;
             display: grid;
             grid-template-columns: 1fr auto;
             gap: 15px;
@@ -558,7 +565,7 @@
         
         .history-formula {
             font-weight: 600;
-            color: #1a2980;
+            color: #553c9a;
             font-size: 1.1rem;
         }
         
@@ -566,7 +573,7 @@
             display: flex;
             gap: 15px;
             font-size: 0.95rem;
-            color: #555;
+            color: #6c757d;
             flex-wrap: wrap;
         }
         
@@ -578,7 +585,7 @@
         
         .history-result {
             font-weight: 700;
-            color: #26d0ce;
+            color: #667eea;
             font-size: 1.8rem;
             min-width: 120px;
             display: flex;
@@ -589,7 +596,7 @@
         .empty-history {
             text-align: center;
             padding: 50px 20px;
-            color: #868e96;
+            color: #6c757d;
         }
         
         .empty-history i {
