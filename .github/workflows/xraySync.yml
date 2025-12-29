@@ -1,0 +1,60 @@
+name: Sync Latest Release to R2
+
+on:
+  # 在针对 `main` 分支的推送上运行。如果你
+    # 使用 `master` 分支作为默认分支，请将其更改为 `master`
+    push:
+      branches: [main]
+  
+    # 允许你从 Actions 选项卡手动运行此工作流程
+    workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Latest Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_REPO: 'XTLS/Xray-core'   # 替换为目标仓库，如：vercel/next.js
+          FILE_PATTERN: 'Xray-windows-64.zip'    # 替换为要下载的文件模式，如：*.zip
+        run: |
+          # 安装 GitHub CLI
+          type -p gh >/dev/null || sudo apt-get install -y gh
+          # 下载指定仓库的最新 Release 文件
+          gh release download --repo $TARGET_REPO --pattern "$FILE_PATTERN" --clobber
+          echo "✅ Download completed. Files:"
+          ls -la
+
+      - name: Configure AWS CLI for R2
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: |
+          # 配置 AWS CLI 以使用 R2 的 S3 兼容端点
+          aws configure set aws_access_key_id $R2_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $R2_SECRET_ACCESS_KEY
+          aws configure set default.region auto
+          # R2 的 S3 API 端点格式
+          R2_ENDPOINT_URL="https://$R2_ACCOUNT_ID.r2.cloudflarestorage.com"
+          echo "R2 Endpoint: $R2_ENDPOINT_URL"
+
+      - name: Upload Files to R2 Bucket
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET_NAME: ${{ secrets.R2_BUCKET_NAME }}
+        run: |
+          R2_ENDPOINT_URL="https://$R2_ACCOUNT_ID.r2.cloudflarestorage.com"
+          # 上传当前目录下所有文件到 R2 存储桶根目录
+          for file in *; do
+            if [ -f "$file" ]; then
+              echo "Uploading $file to R2..."
+              aws s3 cp "$file" "s3://$R2_BUCKET_NAME/" --endpoint-url="$R2_ENDPOINT_URL"
+            fi
+          done
+          echo "✅ All files uploaded to R2."
