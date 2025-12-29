@@ -25,7 +25,11 @@ jobs:
           # 安装 GitHub CLI
           type -p gh >/dev/null || sudo apt-get install -y gh
           # 下载指定仓库的最新 Release 文件
-          gh release download --repo $TARGET_REPO --pattern "$FILE_PATTERN" --clobber
+          gh release download --repo 2dust/v2rayN --pattern v2rayN-windows-64.zip --clobber
+          gh release download --repo XTLS/Xray-core --pattern Xray-windows-64.zip --clobber
+          gh release download --repo 2dust/v2rayNG --pattern *_arm64-v8a.apk --clobber
+          v2rayNG_1.10.32_arm64-v8a.apk
+
           echo "✅ Download completed. Files:"
           ls -la
 
