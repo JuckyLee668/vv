@@ -28,7 +28,6 @@ jobs:
           gh release download --repo 2dust/v2rayN --pattern v2rayN-windows-64.zip --clobber
           gh release download --repo XTLS/Xray-core --pattern Xray-windows-64.zip --clobber
           gh release download --repo 2dust/v2rayNG --pattern *_arm64-v8a.apk --clobber
-          v2rayNG_1.10.32_arm64-v8a.apk
 
           echo "✅ Download completed. Files:"
           ls -la
