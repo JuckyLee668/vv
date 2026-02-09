@@ -106,13 +106,30 @@
 - **姓名**：淅寒
 - **兴趣爱好**：编程、开源项目、技术分享
 
-## 我的项目
+## 我的项目（已补充）
 
-### [vitepress-with-github-Actions](https://github.com/JuckyLee668/vitepress-with-github-Actions)
+> 说明：当前环境无法直接访问 GitHub API（网络返回 403），因此先基于仓库内可确认的信息进行补充；后续可按下方“自动同步清单”一键刷新为账号下全部仓库。
 
-这是一个使用 VitePress 构建文档的项目。通过 GitHub Actions 自动化构建和部署，确保文档始终保持最新。
+### 1) [vv](https://github.com/JuckyLee668/vv)
+- 个人站点与工具集合（本仓库）
+- 包含剪贴板、公式计算、V2Ray 配置转换、API 代理等页面
 
+### 2) [vitepress-with-github-Actions](https://github.com/JuckyLee668/vitepress-with-github-Actions)
+- 使用 VitePress 构建文档站
+- 使用 GitHub Actions 自动化构建与部署
 
+### 3) [iissnan.github.com](https://github.com/iissnan/iissnan.github.com)
+- 仓库 `Source/iissnan.github.com-master.zip` 中包含的站点源码备份（用于学习与参考）
+
+### 自动同步“账号下所有项目”（建议）
+当你在本地有网络时，可运行以下命令自动生成完整项目清单：
+
+```bash
+curl -s "https://api.github.com/users/JuckyLee668/repos?per_page=100&sort=updated" \
+| jq -r '.[] | "- [\\(.name)](\\(.html_url)) - \\(.description // "无描述")"'
+```
+
+你也可以把用户名改为 `jucky668` 再执行一次，以覆盖大小写或历史账号差异。
 
 ## 联系我
 
