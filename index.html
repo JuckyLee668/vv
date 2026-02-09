@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xi Han | 春天的花，冬天的梦</title>
+    <title>Xi Han | Minimal Lab</title>
     <link rel="shortcut icon" href="assets/images/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="assets/fonts/iconfont.css">
@@ -15,11 +15,12 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at 20% 20%, #242424 0%, #121212 40%, #090909 100%);
             min-height: 100vh;
-            color: #333;
+            color: #f5f5f7;
             overflow-x: hidden;
+            letter-spacing: 0.01em;
         }
 
         .container {
@@ -34,10 +35,10 @@
             top: 0;
             left: 0;
             right: 0;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(19, 19, 20, 0.78);
             backdrop-filter: blur(10px);
             z-index: 1000;
-            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
             transition: all 0.3s ease;
         }
 
@@ -49,13 +50,12 @@
         }
 
         .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #f5f5f7;
             text-decoration: none;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
         }
 
         nav ul {
@@ -67,18 +67,19 @@
 
         nav a {
             text-decoration: none;
-            color: #2c3e50;
+            color: #d8d8da;
             font-weight: 500;
             padding: 8px 16px;
-            border-radius: 20px;
+            border-radius: 999px;
             transition: all 0.3s ease;
             position: relative;
+            border: 1px solid transparent;
         }
 
         nav a:hover {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.18);
         }
 
         /* 主内容区 */
@@ -94,38 +95,56 @@
         }
 
         .hero-section {
-            background: rgba(255, 255, 255, 0.95);
+            background: linear-gradient(160deg, rgba(36, 36, 37, 0.9), rgba(16, 16, 16, 0.84));
             backdrop-filter: blur(10px);
-            border-radius: 30px;
-            padding: 60px 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            padding: 68px 48px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
             margin-bottom: 40px;
             animation: fadeInUp 0.8s ease;
         }
 
         .hero-title {
-            font-size: 3.5rem;
+            font-size: 3.8rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(90deg, #ffffff 0%, #b9bdc5 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 20px;
+            letter-spacing: -0.02em;
         }
 
         .hero-subtitle {
             font-size: 1.3rem;
-            color: #7f8c8d;
+            color: #b8bcc4;
             margin-bottom: 30px;
-            font-weight: 300;
+            font-weight: 400;
         }
 
         .hero-description {
-            font-size: 1.1rem;
-            color: #5a6c7d;
+            font-size: 1.05rem;
+            color: #d2d5db;
             line-height: 1.8;
             max-width: 600px;
             margin: 0 auto 40px;
+        }
+
+        .hero-tags {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .hero-tags span {
+            padding: 8px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.05);
+            color: #eceef3;
+            font-size: 0.86rem;
         }
 
         /* 特色卡片网格 */
@@ -139,13 +158,12 @@
         }
 
         .feature-card {
-            background: #f8f9ff;
-            border: 1px solid #e0e5ff;
+            background: linear-gradient(180deg, #181819 0%, #101011 100%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 18px 36px rgba(0, 0, 0, 0.35);
             transition: all 0.3s ease;
-            border-left: 4px solid #667eea;
             position: relative;
             overflow: hidden;
             text-align: center;
@@ -158,14 +176,15 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: linear-gradient(90deg, #8f939a, #ffffff);
             transform: scaleX(0);
             transition: transform 0.3s ease;
         }
 
         .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            transform: translateY(-8px);
+            box-shadow: 0 24px 42px rgba(0, 0, 0, 0.42);
+            border-color: rgba(255, 255, 255, 0.24);
         }
 
         .feature-card:hover::before {
@@ -174,7 +193,7 @@
 
         .feature-icon {
             font-size: 2.5rem;
-            color: #667eea;
+            color: #f0f2f6;
             margin-bottom: 20px;
             display: block;
         }
@@ -182,23 +201,23 @@
         .feature-title {
             font-size: 1.3rem;
             font-weight: 600;
-            color: #2c3e50;
+            color: #ffffff;
             margin-bottom: 12px;
         }
 
         .feature-description {
-            color: #7f8c8d;
+            color: #bec2ca;
             font-size: 0.95rem;
             line-height: 1.6;
         }
 
         /* 页脚 */
         footer {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(15, 15, 16, 0.86);
             backdrop-filter: blur(10px);
             padding: 30px 0;
             text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.09);
         }
 
         .footer-content {
@@ -210,18 +229,18 @@
         }
 
         .footer-link {
-            color: #667eea;
+            color: #f5f5f7;
             font-size: 1.5rem;
             transition: all 0.3s ease;
         }
 
         .footer-link:hover {
-            color: #764ba2;
-            transform: translateY(-3px);
+            color: #9ea3ab;
+            transform: translateY(-2px);
         }
 
         .footer-text {
-            color: #7f8c8d;
+            color: #b7bac0;
             font-size: 0.95rem;
         }
 
@@ -302,8 +321,7 @@
 
         /* 滚动时头部样式调整 */
         .header-scrolled {
-            background: rgba(255, 255, 255, 0.98);
-            box-shadow: 0 2px 30px rgba(0, 0, 0, 0.15);
+            background: rgba(13, 13, 14, 0.92);
         }
     </style>
 </head>
@@ -311,7 +329,7 @@
     <header id="header">
         <div class="container">
             <div class="header-content">
-                <a href="#" class="logo">花非花雾非雾</a>
+                <a href="#" class="logo">Xi Han · Minimal</a>
                 <nav>
                     <ul>
                         <li><a href="https://boke.xi-han.top/"><i class="fas fa-blog"></i> 博客</a></li>
@@ -330,37 +348,43 @@
         <div class="container">
             <div class="hero-section">
                 <h1 class="hero-title">Xi Han</h1>
-                <p class="hero-subtitle">春天的花，冬天的梦</p>
+                <p class="hero-subtitle">春天的花，冬天的梦 · Apple-like Minimalism</p>
                 <p class="hero-description">
-                    欢迎来到我的个人空间。这里汇集了我在技术路上的探索与思考，
-                    以及生活中的点点滴滴。让我们一起在知识的海洋中遨游，
-                    在代码的世界里创造美好。
+                    我偏爱简约、有秩序、专注内容的设计语言。
+                    这里是我的个人数字花园：记录技术探索，沉淀开源实践，
+                    也保留一些关于生活与创作的灵感片段。
                 </p>
+                <div class="hero-tags">
+                    <span>Developer</span>
+                    <span>Builder</span>
+                    <span>Minimalist</span>
+                    <span>Chengdu</span>
+                </div>
             </div>
 
             <div class="features-grid">
                 <div class="feature-card">
                     <i class="fas fa-rocket feature-icon"></i>
                     <h3 class="feature-title">技术探索</h3>
-                    <p class="feature-description">持续学习新技术，分享开发经验和最佳实践</p>
+                    <p class="feature-description">聚焦可复用方案，持续打磨工程效率与产品体验。</p>
                 </div>
 
                 <div class="feature-card">
                     <i class="fas fa-code feature-icon"></i>
-                    <h3 class="feature-title">开源项目</h3>
-                    <p class="feature-description">参与开源社区，贡献有价值的代码和工具</p>
+                    <h3 class="feature-title">开源实践</h3>
+                    <p class="feature-description">通过真实项目沉淀工具链与方法论，保持长期迭代。</p>
                 </div>
 
                 <div class="feature-card">
                     <i class="fas fa-lightbulb feature-icon"></i>
-                    <h3 class="feature-title">创新思维</h3>
-                    <p class="feature-description">用创新的思维解决问题，创造更好的解决方案</p>
+                    <h3 class="feature-title">产品思维</h3>
+                    <p class="feature-description">从用户场景出发，追求简洁、稳定、可持续的设计。</p>
                 </div>
 
                 <div class="feature-card">
                     <i class="fas fa-users feature-icon"></i>
-                    <h3 class="feature-title">知识分享</h3>
-                    <p class="feature-description">乐于分享技术知识，帮助他人成长进步</p>
+                    <h3 class="feature-title">个人表达</h3>
+                    <p class="feature-description">代码、文字与灵感并行，保持克制但有温度的风格。</p>
                 </div>
             </div>
         </div>
